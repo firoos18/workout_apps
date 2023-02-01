@@ -1,38 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:workout_apps/data/hive_database.dart';
 import 'package:workout_apps/models/exercise.dart';
 import 'package:workout_apps/models/workout.dart';
 
 class WorkoutData extends ChangeNotifier {
+  final db = HiveDatabase();
+
   List<Workout> workoutList = [
-    Workout(name: "Upper Body", exercises: [
-      Exercise(
-        name: "Bicep Curls",
-        weight: "12",
-        reps: "10",
-        sets: "3",
-      ),
-      Exercise(
-        name: "Incline Bicep Curls",
-        weight: "8",
-        reps: "10",
-        sets: "3",
-      )
-    ]),
-    Workout(name: "Lower Body", exercises: [
-      Exercise(
-        name: "Squats",
-        weight: "10",
-        reps: "10",
-        sets: "3",
-      ),
-      Exercise(
-        name: "Leg Press",
-        weight: "50",
-        reps: "10",
-        sets: "3",
-      )
-    ])
+    Workout(
+      name: "Upper Body",
+      exercises: [
+        Exercise(
+          name: "Bicep Curls",
+          weight: "12",
+          reps: "10",
+          sets: "3",
+        ),
+        Exercise(
+          name: "Incline Bicep Curls",
+          weight: "8",
+          reps: "10",
+          sets: "3",
+        )
+      ],
+    ),
+    Workout(
+      name: "Lower Body",
+      exercises: [
+        Exercise(
+          name: "Squats",
+          weight: "10",
+          reps: "10",
+          sets: "3",
+        ),
+        Exercise(
+          name: "Leg Press",
+          weight: "50",
+          reps: "10",
+          sets: "3",
+        )
+      ],
+    )
   ];
+
+  // if there're workouts already in database, then get that workout list,
+  void initializeWorkoutList() {
+    if (db.previousDataExists()) {
+      workoutList = db.readFromDatabase();
+    } else {
+      // otherwise use default workouts
+      db.saveToDatabase(workoutList);
+    }
+  }
 
   // get the list of workouts
   List<Workout> getWorkoutList() {
