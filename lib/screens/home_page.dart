@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_apps/components/heat_map.dart';
 import 'package:workout_apps/data/workout_data.dart';
 import 'package:workout_apps/screens/workout_page.dart';
 
@@ -13,6 +15,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // text controller
   final newWorkoutNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Provider.of<WorkoutData>(context, listen: false).initializeWorkoutList();
+  }
 
   createNewWorkout() {
     showDialog(
@@ -75,15 +84,26 @@ class _HomePageState extends State<HomePage> {
           title: const Text('Workout Tracker'),
           centerTitle: true,
         ),
-        body: ListView.builder(
-          itemCount: value.workoutList.length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(value.getWorkoutList()[index].name),
-            trailing: IconButton(
-                onPressed: () =>
-                    goToWorkoutPage(value.getWorkoutList()[index].name),
-                icon: const Icon(Icons.chevron_right)),
-          ),
+        body: ListView(
+          children: [
+            // Heatmap
+            CalendarHeatMap(
+                datasets: value.heatMapDatasets,
+                startDateYYYYMMDD: value.getStartDate()),
+            // Workout List
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: value.workoutList.length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(value.getWorkoutList()[index].name),
+                trailing: IconButton(
+                    onPressed: () =>
+                        goToWorkoutPage(value.getWorkoutList()[index].name),
+                    icon: const Icon(Icons.chevron_right)),
+              ),
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: createNewWorkout,

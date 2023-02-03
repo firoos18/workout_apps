@@ -15,6 +15,7 @@ class HiveDatabase {
       return false;
     } else {
       print('Previous data does exists');
+      _myBox.put("START_DATE", todayDateYYYYMMDD());
       return true;
     }
   }
